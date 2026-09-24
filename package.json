@@ -1,0 +1,9 @@
+{
+  "name": "api-guardian-test-repo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Controlled test repo for pressure-testing the API Guardian tool",
+  "dependencies": {
+    "stripe": "^17.0.0"
+  }
+}
