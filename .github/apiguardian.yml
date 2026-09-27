@@ -1,0 +1,13 @@
+version: 1
+ 
+updates:
+  - vendor: stripe
+    directory: "/"
+    schedule:
+      interval: daily
+    labels:
+      - "api-migration"
+      - "automated"
+    reviewers:
+      - "payments-team"
+    auto-merge: false
