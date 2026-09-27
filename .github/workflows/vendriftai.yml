@@ -41,7 +41,7 @@ jobs:
 
       # Self-referential: uses the action defined in this same repo.
       # External users: replace "./" with "svudgimath/api-guardian@main"
-      - uses: ./
+      - uses: svudgimath/api-guardian@main
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           dry-run: ${{ inputs.dry_run || false }}
