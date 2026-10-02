@@ -1,49 +1,29 @@
+# .github/workflows/vendriftai.yml
 name: VendriftAI
-
-# Scans this repo for API breaking changes on a schedule and opens fix PRs.
-# To use VendriftAI in YOUR repo, copy this file into .github/workflows/
-# and replace "uses: ./" with "uses: svudgimath/api-guardian@main".
-
 on:
-  schedule:
-    # Runs every Monday at 08:00 UTC — matches the default "weekly" interval.
-    # Repos configured with "daily" still respect their own schedule setting.
-    - cron: '0 8 * * 1'
-
-  workflow_dispatch:
-    inputs:
-      dry_run:
-        description: 'Dry run — scan only, do not open PRs'
-        type: boolean
-        default: false
-
-  # Report reviews and merges of VendriftAI PRs within minutes (no scan).
-  pull_request:
-    types: [closed]
-  pull_request_review:
-    types: [submitted, dismissed]
-
+  schedule:
+    - cron: '0 8 * * 1'
+  workflow_dispatch:
+  issue_comment:
+    types: [created]
+ 
 jobs:
-  scan:
-    name: Scan for API Updates
-    # For PR events, only VendriftAI's own PRs start a job.
-    if: >-
-      github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' ||
-      startsWith(github.event.pull_request.title, '[VendriftAI]') ||
-      startsWith(github.event.pull_request.title, '[API Guardian]')
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write       # create branches
-      pull-requests: write  # open fix PRs
-
-    steps:
-      - uses: actions/checkout@v4
-
-      # Self-referential: uses the action defined in this same repo.
-      # External users: replace "./" with "svudgimath/api-guardian@main"
-      - uses: svudgimath/api-guardian@main
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          dry-run: ${{ inputs.dry_run || false }}
-        env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+  vendriftai:
+    if: >-
+      github.event_name != 'issue_comment' ||
+      startsWith(github.event.comment.body, '/vendriftai')
+    runs-on: ubuntu-latest
+    concurrency:
+      group: vendriftai
+      cancel-in-progress: false
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+      checks: read
+      statuses: read
+      actions: read
+    steps:
+      - uses: svudgimath/vendriftai-action@v1
+        with:
+          anthropic-api-key: ${{ secrets.ANTHROPIC_API_KEY }}
