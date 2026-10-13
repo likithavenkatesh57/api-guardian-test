@@ -1,16 +1,12 @@
-// checkout.js — TEST CASE 1: true positive, ambiguous migration.
-// stripe.charges.create has two valid alternatives (paymentIntents vs
-// checkout.sessions) in the ecosystem file, so this should route through
-// fixSingleUsageVersioned and come back with a targetVersion + selectionReason,
-// not a silent codemod swap.
- 
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
  
 async function chargeCustomer(amountCents) {
-  return stripe.charges.create({
+  return stripe.paymentIntents.create({
     amount: amountCents,
     currency: 'usd',
-    source: 'tok_visa', // Stripe's built-in test token, no real card involved
+    payment_method: 'tok_visa',
+    comfirm: true
+    automatic_payment_methods: { enabled: true },
     description: 'Test purchase',
   });
 }
