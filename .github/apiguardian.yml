@@ -3,6 +3,8 @@ version: 1
 updates:
   - vendor: stripe
     directory: "/"
+    ignore:
+      - "ignored-test.js"
     schedule:
       interval: daily
     labels:
